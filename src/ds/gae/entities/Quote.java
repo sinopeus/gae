@@ -2,74 +2,97 @@ package ds.gae.entities;
 
 import java.util.Date;
 
+import javax.persistence.MappedSuperclass;
+
+@MappedSuperclass
 public class Quote {
 
-    private Date startDate;
-    private Date endDate;
-    private String carRenter;
-    private String rentalCompany;
-    private String carType;
-    private double rentalPrice;
-    
-    /***************
+	private Date	startDate;
+	private Date	endDate;
+	private String	carRenter;
+	private String	rentalCompany;
+	private String	carType;
+	private double	rentalPrice;
+
+	/***************
 	 * CONSTRUCTOR *
 	 ***************/
 
-    Quote(String carRenter, Date start, Date end, String rentalCompany, String carType, double rentalPrice) {
-        this.carRenter = carRenter;
-        this.startDate = start;
-        this.endDate = end;
-        this.rentalCompany = rentalCompany;
-        this.carType = carType;
-        this.rentalPrice = rentalPrice;
-    }
+	Quote() {
 
-    public Date getStartDate() {
-        return startDate;
-    }
+	}
 
-    public Date getEndDate() {
-        return endDate;
-    }
+	Quote(
+			String carRenter,
+			Date start,
+			Date end,
+			String rentalCompany,
+			String carType,
+			double rentalPrice) {
+		this.carRenter = carRenter;
+		this.startDate = start;
+		this.endDate = end;
+		this.rentalCompany = rentalCompany;
+		this.carType = carType;
+		this.rentalPrice = rentalPrice;
+	}
 
-    public String getCarRenter() {
-        return carRenter;
-    }
+	public Date getStartDate() {
+		return startDate;
+	}
 
-    public String getRentalCompany() {
-        return rentalCompany;
-    }
+	public Date getEndDate() {
+		return endDate;
+	}
 
-    public double getRentalPrice() {
-        return rentalPrice;
-    }
-    
-    public String getCarType() {
+	public String getCarRenter() {
+		return carRenter;
+	}
+
+	public String getRentalCompany() {
+		return rentalCompany;
+	}
+
+	public double getRentalPrice() {
+		return rentalPrice;
+	}
+
+	public String getCarType() {
 		return carType;
 	}
-    
-    /*************
-     * TO STRING *
-     *************/
-    
-    @Override
-    public String toString() {
-        return String.format("Quote for %s from %s to %s at %s\nCar type: %s\tTotal price: %.2f", 
-                getCarRenter(), getStartDate(), getEndDate(), getRentalCompany(), getCarType(), getRentalPrice());
-    }
 
-    @Override
+	/*************
+	 * TO STRING *
+	 *************/
+
+	@Override
+	public String toString() {
+		return String
+				.format(
+						"Quote for %s from %s to %s at %s\nCar type: %s\tTotal price: %.2f",
+						getCarRenter(),
+						getStartDate(),
+						getEndDate(),
+						getRentalCompany(),
+						getCarType(),
+						getRentalPrice());
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((carRenter == null) ? 0 : carRenter.hashCode());
+		result = prime * result
+				+ ((carRenter == null) ? 0 : carRenter.hashCode());
 		result = prime * result + ((carType == null) ? 0 : carType.hashCode());
 		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
-		result = prime * result + ((rentalCompany == null) ? 0 : rentalCompany.hashCode());
+		result = prime * result
+				+ ((rentalCompany == null) ? 0 : rentalCompany.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(rentalPrice);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+		result = prime * result
+				+ ((startDate == null) ? 0 : startDate.hashCode());
 		return result;
 	}
 
@@ -102,7 +125,8 @@ public class Quote {
 				return false;
 		} else if (!rentalCompany.equals(other.rentalCompany))
 			return false;
-		if (Double.doubleToLongBits(rentalPrice) != Double.doubleToLongBits(other.rentalPrice))
+		if (Double.doubleToLongBits(rentalPrice) != Double
+				.doubleToLongBits(other.rentalPrice))
 			return false;
 		if (startDate == null) {
 			if (other.startDate != null)
