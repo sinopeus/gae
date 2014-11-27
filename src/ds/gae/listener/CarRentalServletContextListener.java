@@ -36,16 +36,12 @@ public class CarRentalServletContextListener implements ServletContextListener {
 		// If the Hertz car rental company is in the datastore, we assume the
 		// dummy data is available
 
-		// FIXME: use persistence instead
-		// return CarRentalModel.get().CRCS.containsKey("Hertz");
+		// FIXME: can be improved using EXISTS JPQL query, more efficient
 
-		EntityManager em = EMF.get().createEntityManager();
-		em.createQuery("");
 		return CarRentalModel
 				.get()
 				.getAllRentalCompanyNames()
 				.contains("Hertz");
-
 	}
 
 	private void addDummyData() {
@@ -63,8 +59,8 @@ public class CarRentalServletContextListener implements ServletContextListener {
 			Set<Car> cars = loadData(name, datafile);
 			CarRentalCompany company = new CarRentalCompany(name, cars);
 
-			// FIXME: use persistence instead
-			CarRentalModel.get().CRCS.put(name, company);
+			EntityManager em = EMF.get().createEntityManager();
+			em.persist(company);
 
 		} catch (NumberFormatException ex) {
 			Logger
@@ -106,6 +102,8 @@ public class CarRentalServletContextListener implements ServletContextListener {
 					Float.parseFloat(csvReader.nextToken()),
 					Double.parseDouble(csvReader.nextToken()),
 					Boolean.parseBoolean(csvReader.nextToken()));
+			EntityManager em = EMF.get().createEntityManager();
+			em.persist(type);
 			// create N new cars with given type, where N is the 5th field
 			for (int i = Integer.parseInt(csvReader.nextToken()); i > 0; i--) {
 				cars.add(new Car(carId++, type));
