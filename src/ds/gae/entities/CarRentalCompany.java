@@ -13,11 +13,19 @@ import java.util.logging.Logger;
 
 import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 import ds.gae.ReservationException;
 
 @Entity
+@NamedQueries({
+		@NamedQuery(name = "CarRentalCompany.names", query = "SELECT crc.name FROM CarRentalCompany crc"),
+		@NamedQuery(name = "CarRentalCompany.carTypes", query = "SELECT ct.name FROM CarRentalCompany crc, IN(crc.carTypes) AS ct WHERE crc.name = :companyName"),
+		@NamedQuery(name = "CarRentalCompany.carsByType", query = "SELECT car FROM CarRentalCompany crc, IN(crc.carTypes) AS ct, IN(crc.cars) as cars WHERE crc.name = :companyName AND ct = :carType") })
 public class CarRentalCompany {
 
 	private static Logger			logger		= Logger
@@ -27,7 +35,9 @@ public class CarRentalCompany {
 	@PrimaryKey
 	private String					name;
 	@Basic
+	@OneToMany(cascade = CascadeType.ALL)
 	private Set<Car>				cars;
+
 	private Map<String, CarType>	carTypes	= new HashMap<String, CarType>();
 
 	/***************

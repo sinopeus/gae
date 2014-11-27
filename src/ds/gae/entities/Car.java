@@ -6,15 +6,20 @@ import java.util.Set;
 
 import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Car {
 
 	@PrimaryKey
 	private int					id;
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	private CarType				type;
 	@Basic
+	@OneToMany(cascade = CascadeType.ALL)
 	private Set<Reservation>	reservations;
 
 	/***************

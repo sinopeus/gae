@@ -2,8 +2,11 @@ package ds.gae.entities;
 
 import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 @Entity
+@NamedQueries({ @NamedQuery(name = "Reservation.reservationsByRenter", query = "SELECT res FROM Reservation res WHERE res.carRenter = :clientName") })
 public class Reservation extends Quote {
 
 	@PrimaryKey
