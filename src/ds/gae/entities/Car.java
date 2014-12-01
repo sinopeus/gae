@@ -4,23 +4,25 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.jdo.annotations.PrimaryKey;
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
+
+import com.google.appengine.api.datastore.Key;
 
 @Entity
 public class Car {
 
-	@PrimaryKey
-	private int					id;
-	@ManyToOne(cascade = CascadeType.PERSIST)
-	private CarType				type;
-	@Basic
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Key key;
+	private int id;
+	private CarType type;
 	@OneToMany(cascade = CascadeType.ALL)
-	private Set<Reservation>	reservations;
+	private Set<Reservation> reservations;
 
 	/***************
 	 * CONSTRUCTOR *
@@ -42,6 +44,10 @@ public class Car {
 
 	public int getId() {
 		return id;
+	}
+	
+	public Key getKey() {
+		return key;
 	}
 
 	/************

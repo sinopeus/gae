@@ -1,16 +1,25 @@
 package ds.gae.entities;
 
-import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import com.google.appengine.api.datastore.Key;
+
 @Entity
-@NamedQueries({ @NamedQuery(name = "Reservation.reservationsByRenter", query = "SELECT res FROM Reservation res WHERE res.carRenter = :clientName") })
+@NamedQueries({ 
+	@NamedQuery(name = "Reservation.reservationsByRenter", 
+				query = "SELECT res FROM Reservation res WHERE res.carRenter = :clientName") 
+	})
 public class Reservation extends Quote {
 
-	@PrimaryKey
-	private int	carId;
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Key key;
+  	private int	carId;
 
 	/***************
 	 * CONSTRUCTOR *
@@ -37,6 +46,10 @@ public class Reservation extends Quote {
 
 	public int getCarId() {
 		return carId;
+	}
+	
+	public Key getKey() {
+		return key;
 	}
 
 	/*************

@@ -9,12 +9,10 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.EntityManager;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import ds.gae.CarRentalModel;
-import ds.gae.EMF;
 import ds.gae.entities.Car;
 import ds.gae.entities.CarRentalCompany;
 import ds.gae.entities.CarType;
@@ -58,9 +56,7 @@ public class CarRentalServletContextListener implements ServletContextListener {
 
 			Set<Car> cars = loadData(name, datafile);
 			CarRentalCompany company = new CarRentalCompany(name, cars);
-
-			EntityManager em = EMF.get().createEntityManager();
-			em.persist(company);
+			CarRentalModel.get().addRentalCompany(company);
 
 		} catch (NumberFormatException ex) {
 			Logger
@@ -102,14 +98,11 @@ public class CarRentalServletContextListener implements ServletContextListener {
 					Float.parseFloat(csvReader.nextToken()),
 					Double.parseDouble(csvReader.nextToken()),
 					Boolean.parseBoolean(csvReader.nextToken()));
-			EntityManager em = EMF.get().createEntityManager();
-			em.persist(type);
 			// create N new cars with given type, where N is the 5th field
 			for (int i = Integer.parseInt(csvReader.nextToken()); i > 0; i--) {
 				cars.add(new Car(carId++, type));
 			}
 		}
-
 		return cars;
 	}
 
