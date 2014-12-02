@@ -23,7 +23,7 @@ import com.google.appengine.api.datastore.Key;
 						+ "FROM CarType carType "
 						+ "WHERE carType.companyName = :companyName"),
 	@NamedQuery(name = "CarType.carsByCompany", 
-				query = "SELECT cars " 
+				query = "SELECT carType.cars " 
 							+ "FROM CarType carType "
 							+ "WHERE carType.companyName = :companyName AND carType.name = :carTypeName")					
 	})
@@ -36,8 +36,8 @@ public class CarType {
 	
 	private String companyName;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	private Set<Car> cars;
+	@OneToMany(mappedBy="type", cascade = CascadeType.ALL)
+	public Set<Car> cars;
 	
 	private String	name;
 	private int		nbOfSeats;

@@ -342,9 +342,8 @@ public class CarRentalModel {
 	private List<Car> getCarsByCarType(String crcName, CarType carType) {
 		EntityManager em = EMF.get().createEntityManager();
 		try {
-			return em.createNamedQuery("CarType.carsByCompany",Car.class)
-						.setParameter("companyName", crcName)
-						.setParameter("carTypeName", carType.getName())
+			return em.createNamedQuery("Car.byType",Car.class)
+						.setParameter("carType", carType)
 						.getResultList();
 		} finally {
 			em.close();
