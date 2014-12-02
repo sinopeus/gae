@@ -1,9 +1,13 @@
 package ds.gae.entities;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
 
@@ -13,6 +17,9 @@ public class CarType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Key key;
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	private Set<Car> cars;
 	
 	private String	name;
 	private int		nbOfSeats;
@@ -34,12 +41,14 @@ public class CarType {
 					int nbOfSeats,
 					float trunkSpace,
 					double rentalPricePerDay,
-					boolean smokingAllowed) {
+					boolean smokingAllowed,
+					Set<Car> cars) {
 		this.name = name;
 		this.nbOfSeats = nbOfSeats;
 		this.trunkSpace = trunkSpace;
 		this.rentalPricePerDay = rentalPricePerDay;
 		this.smokingAllowed = smokingAllowed;
+		this.cars = cars;
 	}
 
 	public String getName() {
@@ -60,6 +69,10 @@ public class CarType {
 
 	public float getTrunkSpace() {
 		return trunkSpace;
+	}
+	
+	public Set<Car> getCars() {
+		return cars;
 	}
 
 	/*************

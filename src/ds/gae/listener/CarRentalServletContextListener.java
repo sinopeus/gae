@@ -69,7 +69,7 @@ public class CarRentalServletContextListener implements ServletContextListener {
 		}
 	}
 
-	public static Set<Car> loadData(String name, String datafile)
+	public static Set<CarType> loadData(String name, String datafile)
 			throws NumberFormatException, IOException {
 		// FIXME: adapt the implementation of this method to your entity
 		// structure
@@ -93,17 +93,18 @@ public class CarRentalServletContextListener implements ServletContextListener {
 			// tokenize on ,
 			StringTokenizer csvReader = new StringTokenizer(line, ",");
 			// create new car type from first 5 fields
-			CarType type = new CarType(csvReader.nextToken(),
-					Integer.parseInt(csvReader.nextToken()),
-					Float.parseFloat(csvReader.nextToken()),
-					Double.parseDouble(csvReader.nextToken()),
-					Boolean.parseBoolean(csvReader.nextToken()));
+			String typeName = csvReader.nextToken();
+			int nbOfSeats = Integer.parseInt(csvReader.nextToken());
+			float trunkSpace = Float.parseFloat(csvReader.nextToken());
+			double rentalPricePerDay = Double.parseDouble(csvReader.nextToken());
+			boolean smokingAllowed = Boolean.parseBoolean(csvReader.nextToken());
 			// create N new cars with given type, where N is the 5th field
 			for (int i = Integer.parseInt(csvReader.nextToken()); i > 0; i--) {
-				cars.add(new Car(carId++, type));
+				cars.add(new Car(carId++));
 			}
+			CarType type = new CarType(typeName,nbOfSeats,trunkSpace,rentalPricePerDay,smokingAllowed,cars);
 		}
-		return cars;
+		return type;
 	}
 
 	@Override

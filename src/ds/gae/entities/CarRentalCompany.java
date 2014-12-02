@@ -43,8 +43,6 @@ public class CarRentalCompany {
 	@Id
 	private String name;
 	@OneToMany(cascade = CascadeType.ALL)
-	private Set<Car> cars;
-	@OneToMany(cascade = CascadeType.ALL)
 	private Map<String, CarType> carTypes = new HashMap<String, CarType>();
 
 	/***************
@@ -55,15 +53,13 @@ public class CarRentalCompany {
 
 	}
 
-	public CarRentalCompany(String name, Set<Car> cars) {
+	public CarRentalCompany(String name, Map<String, CarType> carTypes) {
 		logger.log(
 				Level.INFO,
 				"<{0}> Car Rental Company {0} starting up...",
 				name);
 		setName(name);
-		this.cars = cars;
-		for (Car car : cars)
-			carTypes.put(car.getType().getName(), car.getType());
+		this.carTypes = carTypes;
 	}
 
 	/********
@@ -107,9 +103,12 @@ public class CarRentalCompany {
 
 	public Set<CarType> getAvailableCarTypes(Date start, Date end) {
 		Set<CarType> availableCarTypes = new HashSet<CarType>();
-		for (Car car : cars) {
-			if (car.isAvailable(start, end)) {
-				availableCarTypes.add(car.getType());
+		for (CarType type : carTypes.values()) {
+			for (Car car : type.getCars()) {
+				if (car.isAvailable(start, end)) {
+					availableCarTypes.add(type);
+					break;
+				}
 			}
 		}
 		return availableCarTypes;
@@ -120,24 +119,31 @@ public class CarRentalCompany {
 	 *********/
 
 	private Car getCar(int uid) {
-		for (Car car : cars) {
-			if (car.getId() == uid)
-				return car;
+		for (CarType type : carTypes.values()) {
+			for (Car car : type.getCars()) {
+				if (car.getId() == uid)
+					return car;
+			}
 		}
 		throw new IllegalArgumentException("<" + name + "> No car with uid "
 				+ uid);
 	}
 
 	public Set<Car> getCars() {
-		return cars;
+		Set<Car> result = new HashSet<Car>();
+		for (CarType type : carTypes.values())
+			result.addAll(type.getCars());
+		return result;
 	}
 
 	private List<Car> getAvailableCars(String carType, Date start, Date end) {
 		List<Car> availableCars = new LinkedList<Car>();
-		for (Car car : cars) {
-			if (car.getType().getName().equals(carType)
-					&& car.isAvailable(start, end)) {
-				availableCars.add(car);
+		for (CarType type : carTypes.values()) {
+			for (Car car : type.getCars()) {
+				if (car.getType().getName().equals(carType)
+						&& car.isAvailable(start, end)) {
+					availableCars.add(car);
+				}
 			}
 		}
 		return availableCars;
