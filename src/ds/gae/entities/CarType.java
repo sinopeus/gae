@@ -83,12 +83,13 @@ public class CarType {
 	public String toString() {
 		return String
 				.format(
-						"Car type: %s \t[seats: %d, price: %.2f, smoking: %b, trunk: %.0fl]",
+						"Car type: %s \t[seats: %d, price: %.2f, smoking: %b, trunk: %.0fl] NumCars: %d",
 						getName(),
 						getNbOfSeats(),
 						getRentalPricePerDay(),
 						isSmokingAllowed(),
-						getTrunkSpace());
+						getTrunkSpace(),
+						getCars().size());
 	}
 
 	@Override
