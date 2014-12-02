@@ -7,10 +7,26 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
 
+@NamedQueries({
+	@NamedQuery(name = "CarType.namesByCompany", 
+				query = "SELECT carType.name " 
+						+ "FROM CarType carType "
+						+ "WHERE carType.companyName = :companyName"),
+	@NamedQuery(name = "CarType.byCompany", 
+				query = "SELECT carType " 
+						+ "FROM CarType carType "
+						+ "WHERE carType.companyName = :companyName"),
+	@NamedQuery(name = "CarType.carsByCompany", 
+				query = "SELECT cars " 
+							+ "FROM CarType carType "
+							+ "WHERE carType.companyName = :companyName AND carType.name = :carTypeName")					
+	})
 @Entity
 public class CarType {
 
@@ -18,6 +34,8 @@ public class CarType {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Key key;
 	
+	private String companyName;
+
 	@OneToMany(cascade = CascadeType.ALL)
 	private Set<Car> cars;
 	
@@ -42,13 +60,15 @@ public class CarType {
 					float trunkSpace,
 					double rentalPricePerDay,
 					boolean smokingAllowed,
-					Set<Car> cars) {
+					Set<Car> cars,
+					String companyName) {
 		this.name = name;
 		this.nbOfSeats = nbOfSeats;
 		this.trunkSpace = trunkSpace;
 		this.rentalPricePerDay = rentalPricePerDay;
 		this.smokingAllowed = smokingAllowed;
 		this.cars = cars;
+		this.companyName = companyName;
 	}
 
 	public String getName() {
@@ -75,6 +95,10 @@ public class CarType {
 		return cars;
 	}
 
+	public String getCompany() {
+		return companyName;
+	}
+	
 	/*************
 	 * TO STRING *
 	 *************/
@@ -83,13 +107,14 @@ public class CarType {
 	public String toString() {
 		return String
 				.format(
-						"Car type: %s \t[seats: %d, price: %.2f, smoking: %b, trunk: %.0fl] NumCars: %d",
+						"Car type: %s \t[seats: %d, price: %.2f, smoking: %b, trunk: %.0fl] NumCars: %d Company: %s",
 						getName(),
 						getNbOfSeats(),
 						getRentalPricePerDay(),
 						isSmokingAllowed(),
 						getTrunkSpace(),
-						getCars().size());
+						getCars().size(),
+						getCompany());
 	}
 
 	@Override

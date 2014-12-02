@@ -40,7 +40,7 @@ public class CarRentalModel {
 		EntityManager em = EMF.get().createEntityManager();
 		try {
 			List<String> names = em
-					.createNamedQuery("CarRentalCompany.carTypes", String.class)
+					.createNamedQuery("CarType.namesByCompany", String.class)
 					.setParameter("companyName", crcName)
 					.getResultList();
 			return new HashSet<String>(names);
@@ -287,7 +287,7 @@ public class CarRentalModel {
 	public Collection<CarType> getCarTypesOfCarRentalCompany(String crcName) {
 		EntityManager em = EMF.get().createEntityManager();
 		try {
-			return em.createNamedQuery("CarRentalCompany.carTypes", CarType.class)
+			return em.createNamedQuery("CarType.byCompany", CarType.class)
 						.setParameter("companyName", crcName)
 						.getResultList();
 		} finally {
@@ -342,9 +342,9 @@ public class CarRentalModel {
 	private List<Car> getCarsByCarType(String crcName, CarType carType) {
 		EntityManager em = EMF.get().createEntityManager();
 		try {
-			return em.createNamedQuery("CarRentalCompany.carsByType",Car.class)
+			return em.createNamedQuery("CarType.carsByCompany",Car.class)
 						.setParameter("companyName", crcName)
-						.setParameter("carType", carType)
+						.setParameter("carTypeName", carType.getName())
 						.getResultList();
 		} finally {
 			em.close();

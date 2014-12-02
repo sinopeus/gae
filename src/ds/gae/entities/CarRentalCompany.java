@@ -2,9 +2,11 @@ package ds.gae.entities;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,17 +24,7 @@ import ds.gae.ReservationException;
 @NamedQueries({
 		@NamedQuery(
 				name = "CarRentalCompany.names", 
-				query = "SELECT crc.name FROM CarRentalCompany crc"),
-		@NamedQuery(
-				name = "CarRentalCompany.carTypes", 
-				query = "SELECT ct.name " 
-						+ "FROM CarRentalCompany crc, IN(crc.carTypes) AS ct "
-						+ "WHERE crc.name = :companyName"),
-		@NamedQuery(
-				name = "CarRentalCompany.carsByType", 
-				query = "SELECT car " 
-						+ "FROM CarRentalCompany crc, IN(crc.carTypes) AS ct, IN(crc.cars) as cars " 
-						+ "WHERE crc.name = :companyName AND ct = :carType") 
+				query = "SELECT crc.name FROM CarRentalCompany crc")
 		})
 public class CarRentalCompany {
 
@@ -41,7 +33,7 @@ public class CarRentalCompany {
 	@Id
 	private String name;
 	@OneToMany(cascade = CascadeType.ALL)
-	private Set<CarType> carTypes = new HashSet<CarType>();
+	private Map<String, CarType> carTypes = new HashMap<String, CarType>();
 
 	/***************
 	 * CONSTRUCTOR *
@@ -51,7 +43,7 @@ public class CarRentalCompany {
 
 	}
 
-	public CarRentalCompany(String name, Set<CarType> carTypes) {
+	public CarRentalCompany(String name, Map<String, CarType> carTypes) {
 		logger.log(
 				Level.INFO,
 				"<{0}> Car Rental Company {0} starting up...",
@@ -77,14 +69,13 @@ public class CarRentalCompany {
 	 *************/
 
 	public Collection<CarType> getAllCarTypes() {
-		return carTypes;
+		return carTypes.values();
 	}
 
 	public CarType getCarType(String carTypeName) {
 		System.out.println(carTypes);
-		for (CarType type : carTypes)
-			if (type.getName().equals(carTypeName))
-				return type;
+		if (carTypes.containsKey(carTypeName))
+			return carTypes.get(carTypeName);
 		throw new IllegalArgumentException("<" + carTypeName
 				+ "> No car type of name " + carTypeName);
 	}
@@ -94,18 +85,16 @@ public class CarRentalCompany {
 				Level.INFO,
 				"<{0}> Checking availability for car type {1}",
 				new Object[] { name, carTypeName });
-		for (CarType type : carTypes) {
-			if (type.getName().equals(carTypeName)) {
-				return getAvailableCarTypes(start, end).contains(type);
-			}
-		}
+		if (carTypes.containsKey(carTypeName))
+			return getAvailableCarTypes(start, end).contains(
+					carTypes.get(carTypeName));
 		throw new IllegalArgumentException("<" + carTypeName
 				+ "> No car type of name " + carTypeName);
 	}
 
 	public Set<CarType> getAvailableCarTypes(Date start, Date end) {
 		Set<CarType> availableCarTypes = new HashSet<CarType>();
-		for (CarType type : carTypes) {
+		for (CarType type : carTypes.values()) {
 			for (Car car : type.getCars()) {
 				if (car.isAvailable(start, end)) {
 					availableCarTypes.add(type);
@@ -121,7 +110,7 @@ public class CarRentalCompany {
 	 *********/
 
 	private Car getCar(int uid) {
-		for (CarType type : carTypes) {
+		for (CarType type : carTypes.values()) {
 			for (Car car : type.getCars()) {
 				if (car.getId() == uid)
 					return car;
@@ -133,17 +122,14 @@ public class CarRentalCompany {
 
 	public Set<Car> getCars() {
 		Set<Car> result = new HashSet<Car>();
-		for (CarType type : carTypes)
+		for (CarType type : carTypes.values())
 			result.addAll(type.getCars());
 		return result;
 	}
 
 	private List<Car> getAvailableCars(String carType, Date start, Date end) {
 		List<Car> availableCars = new LinkedList<Car>();
-		CarType type = null;
-		for (CarType temp : carTypes) 
-			if (temp.getName().equals(carType)) 
-				type = temp;			
+		CarType type = carTypes.get(carType);			
 		for (Car car : type.getCars()) {
 			if (car.isAvailable(start, end)) {
 				availableCars.add(car);
