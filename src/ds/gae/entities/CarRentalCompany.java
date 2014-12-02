@@ -138,12 +138,10 @@ public class CarRentalCompany {
 
 	private List<Car> getAvailableCars(String carType, Date start, Date end) {
 		List<Car> availableCars = new LinkedList<Car>();
-		for (CarType type : carTypes.values()) {
-			for (Car car : type.getCars()) {
-				if (car.getType().getName().equals(carType)
-						&& car.isAvailable(start, end)) {
-					availableCars.add(car);
-				}
+		CarType type = carTypes.get(carType);			
+		for (Car car : type.getCars()) {
+			if (car.isAvailable(start, end)) {
+				availableCars.add(car);
 			}
 		}
 		return availableCars;

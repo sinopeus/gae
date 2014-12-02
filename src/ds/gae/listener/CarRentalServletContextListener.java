@@ -3,7 +3,9 @@ package ds.gae.listener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -54,8 +56,8 @@ public class CarRentalServletContextListener implements ServletContextListener {
 				new Object[] { name, datafile });
 		try {
 
-			Set<Car> cars = loadData(name, datafile);
-			CarRentalCompany company = new CarRentalCompany(name, cars);
+			Map<String,CarType> carTypes = loadData(name, datafile);
+			CarRentalCompany company = new CarRentalCompany(name, carTypes);
 			CarRentalModel.get().addRentalCompany(company);
 
 		} catch (NumberFormatException ex) {
@@ -69,12 +71,13 @@ public class CarRentalServletContextListener implements ServletContextListener {
 		}
 	}
 
-	public static Set<CarType> loadData(String name, String datafile)
+	public static Map<String,CarType> loadData(String name, String datafile)
 			throws NumberFormatException, IOException {
 		// FIXME: adapt the implementation of this method to your entity
 		// structure
 
 		Set<Car> cars = new HashSet<Car>();
+		Map<String,CarType> types = new HashMap<String,CarType>();
 		int carId = 1;
 
 		// open file from jar
@@ -102,9 +105,9 @@ public class CarRentalServletContextListener implements ServletContextListener {
 			for (int i = Integer.parseInt(csvReader.nextToken()); i > 0; i--) {
 				cars.add(new Car(carId++));
 			}
-			CarType type = new CarType(typeName,nbOfSeats,trunkSpace,rentalPricePerDay,smokingAllowed,cars);
+			types.put(typeName, new CarType(typeName,nbOfSeats,trunkSpace,rentalPricePerDay,smokingAllowed,cars));
 		}
-		return type;
+		return types;
 	}
 
 	@Override
