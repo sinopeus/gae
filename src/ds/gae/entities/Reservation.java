@@ -16,6 +16,8 @@ import com.google.appengine.api.datastore.Key;
 	})
 public class Reservation extends Quote {
 
+	private static final long serialVersionUID = -4321795798633985324L;
+	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Key key;

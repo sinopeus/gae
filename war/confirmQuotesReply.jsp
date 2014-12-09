@@ -1,3 +1,5 @@
+<%@page import="java.util.List"%>
+<%@page import="ds.gae.CarRentalModel"%>
 <%@page import="ds.gae.view.JSPSite"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -52,10 +54,24 @@ for (JSPSite site : JSPSite.publiclyLinkedValues()) {
 			<div class="frameDiv" style="margin: 150px 150px;">
 				<H2>Reply</H2>
 				<div class="group">
+				<%
+	List<String> notifications = CarRentalModel.get().getNotifications(renter);
+	
+	if ( notifications != null && notifications.size() > 0) {
+		
+		for (String n : notifications) { 
+	 %>
 					<p>
-					TODO: Here you can give some information to client who is currently 
-							logged in as user <%=renter%>.
+						<%=n%>.
 					</p>
+						<%
+		} 
+	} else {
+	 %>
+					<p>No notifications</p>
+	<%
+	} 
+	 %>	
 				</div>
 			</div>
 
