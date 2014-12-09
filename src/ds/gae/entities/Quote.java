@@ -1,12 +1,15 @@
 package ds.gae.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class Quote {
+public class Quote implements Serializable {
 
+	private static final long serialVersionUID = 2356074024519720085L;
+	
 	private Date	startDate;
 	private Date	endDate;
 	private String	carRenter;
