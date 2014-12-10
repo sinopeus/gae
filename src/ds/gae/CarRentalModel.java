@@ -14,6 +14,7 @@ import javax.persistence.EntityTransaction;
 import ds.gae.entities.Car;
 import ds.gae.entities.CarRentalCompany;
 import ds.gae.entities.CarType;
+import ds.gae.entities.Notification;
 import ds.gae.entities.Quote;
 import ds.gae.entities.Reservation;
 import ds.gae.entities.ReservationConstraints;
@@ -360,5 +361,40 @@ public class CarRentalModel {
 	 */
 	public boolean hasReservations(String renter) {
 		return this.getReservations(renter).size() > 0;
+	}
+	
+	/**
+	 * Get the list of notifications for the given car renter.
+	 *
+	 * @param renter
+	 *            name of a renter
+	 * @return List of notifications for the given renter
+	 */
+	public List<String> getNotifications(String renter) {
+		EntityManager em = EMF.get().createEntityManager();
+		try {
+			return em.createNamedQuery("Notification.byRenter",String.class)
+						.setParameter("renter", renter)
+						.getResultList();
+		} finally {
+			em.close();
+		}
+	}
+	
+	/**
+	 * Create a new notification.
+	 * 
+	 * @param renter
+	 *            name of the renter to which the notification is targeted
+	 * @param message
+	 * 		      content of the notification
+	 */
+	public void addNotification(String renter, String message) {
+		EntityManager em = EMF.get().createEntityManager();
+		try {
+			em.persist(new Notification(renter, message));
+		} finally {
+			em.close();
+		}
 	}
 }

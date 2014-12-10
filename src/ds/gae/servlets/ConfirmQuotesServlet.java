@@ -14,6 +14,7 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 
+import ds.gae.ConfirmQuotesTask;
 import ds.gae.SerializationUtils;
 import ds.gae.entities.Quote;
 import ds.gae.view.JSPSite;
@@ -25,6 +26,7 @@ public class ConfirmQuotesServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		HttpSession session = req.getSession();
+		@SuppressWarnings("unchecked")
 		HashMap<String, ArrayList<Quote>> allQuotes = (HashMap<String, ArrayList<Quote>>) session
 				.getAttribute("quotes");
 
@@ -33,14 +35,23 @@ public class ConfirmQuotesServlet extends HttpServlet {
 		for (String crcName : allQuotes.keySet()) {
 			qs.addAll(allQuotes.get(crcName));
 		}
+		
 		// Clear quotes in session
 		session.setAttribute("quotes", new HashMap<String, ArrayList<Quote>>());
+		
+		// Get the name of the renter
+		String renter = (String) session.getAttribute("renter");
+		
+		// Construct serialized payload
+		ConfirmQuotesTask task = new ConfirmQuotesTask(qs, renter);
+		byte[] serializedTask = SerializationUtils.serialize(task);
 
 		// Create task and add it to the (default) queue
 		Queue queue = QueueFactory.getDefaultQueue();
-		TaskOptions options = TaskOptions.Builder.withUrl("/worker").payload(SerializationUtils.serialize(qs));
+		TaskOptions options = TaskOptions.Builder.withUrl("/worker").payload(serializedTask);
 		queue.add(options);
 
+		// Redirect to notifications page
 		resp.sendRedirect(JSPSite.CONFIRM_QUOTES_RESPONSE.url());
 	}
 }
