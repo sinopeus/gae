@@ -370,10 +370,10 @@ public class CarRentalModel {
 	 *            name of a renter
 	 * @return List of notifications for the given renter
 	 */
-	public List<String> getNotifications(String renter) {
+	public List<Notification> getNotifications(String renter) {
 		EntityManager em = EMF.get().createEntityManager();
 		try {
-			return em.createNamedQuery("Notification.byRenter",String.class)
+			return em.createNamedQuery("Notification.byRenter",Notification.class)
 						.setParameter("renter", renter)
 						.getResultList();
 		} finally {

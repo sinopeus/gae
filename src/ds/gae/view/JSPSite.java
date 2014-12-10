@@ -14,9 +14,11 @@ public enum JSPSite {
 	
 	RESERVATION_ERROR("Reservation Error", "/reservationError.jsp", false),
 	LOGIN("Login", "/login.jsp", false),
-	CONFIRM_QUOTES_RESPONSE("Notifications", "/confirmQuotesReply.jsp", true),	
+	CONFIRM_QUOTES_RESPONSE("Confirm Quote Reply", "/confirmQuotesReply.jsp", false),
 	PERSIST_TEST_SERVLET("Persist Test", "/persTest", true),	
-	PERSIST_TEST("Persist Test", "/persTest.jsp", false);	
+	PERSIST_TEST("Persist Test", "/persTest.jsp", false),	
+	
+	NOTIFICATIONS("Notifications", "/notifications.jsp", true);
 
 	/**
 	 * This is a human readable string describing the JSP site. It may be used
