@@ -1,8 +1,7 @@
 package ds.gae;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,30 +16,27 @@ public class Worker extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// Deserialize quotes
-		ConfirmQuotesTask task = SerializationUtils.deserialize(req.getInputStream());
+		ArrayList<Quote> quotes = SerializationUtils.deserialize(req.getInputStream());
 
 		try {
 			// Try to confirm quotes
-			CarRentalModel.get().confirmQuotes(task.getQuotes());
+			CarRentalModel.get().confirmQuotes(quotes);
 			// Success
-			String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 			StringBuilder message = new StringBuilder();
-			message.append(String.format("<strong>%s</strong> | quote(s) successfully confirmed", timeStamp));
-			message.append("<br>");
-			for (Quote quote : task.getQuotes()) {
-				message.append("*  " + quote);
-				message.append("<br>");
+			message.append("The following quote(s) are successfully confirmed:<br/>");
+			message.append("<ul>");
+			for (Quote quote : quotes) {
+				message.append("<li>" + quote + "</li>");
 			}
-			CarRentalModel.get().addNotification(task.getRenter(), message.toString());
+			message.append("</ul>");
+			CarRentalModel.get().addNotification(quotes.get(0).getCarRenter(), message.toString());
 		} catch (ReservationException e) {
 			// Failure
 			// e.printStackTrace();
-			String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 			StringBuilder message = new StringBuilder();
-			message.append(String.format("<strong>%s</strong> | Could not confirm all quote(s).", timeStamp));
-			message.append("<br>");
+			message.append("Could not confirm all quote(s).<br/>");
 			message.append(e.getMessage());
-			CarRentalModel.get().addNotification(task.getRenter(), message.toString());
+			CarRentalModel.get().addNotification(quotes.get(0).getCarRenter(), message.toString());
 		}
 	}
 }

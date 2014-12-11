@@ -14,7 +14,7 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 
-import ds.gae.ConfirmQuotesTask;
+import ds.gae.CarRentalModel;
 import ds.gae.SerializationUtils;
 import ds.gae.entities.Quote;
 import ds.gae.view.JSPSite;
@@ -39,17 +39,17 @@ public class ConfirmQuotesServlet extends HttpServlet {
 		// Clear quotes in session
 		session.setAttribute("quotes", new HashMap<String, ArrayList<Quote>>());
 		
-		// Get the name of the renter
-		String renter = (String) session.getAttribute("renter");
-		
 		// Construct serialized payload
-		ConfirmQuotesTask task = new ConfirmQuotesTask(qs, renter);
-		byte[] serializedTask = SerializationUtils.serialize(task);
+		byte[] serializedTask = SerializationUtils.serialize(qs);
 
 		// Create task and add it to the (default) queue
 		Queue queue = QueueFactory.getDefaultQueue();
 		TaskOptions options = TaskOptions.Builder.withUrl("/worker").payload(serializedTask);
 		queue.add(options);
+		
+		// Create notification
+		String msg = String.format("%d quote(s) are being processed", qs.size());
+		CarRentalModel.get().addNotification(qs.get(0).getCarRenter(), msg);
 
 		// Redirect to notifications page
 		resp.sendRedirect(JSPSite.CONFIRM_QUOTES_RESPONSE.url());

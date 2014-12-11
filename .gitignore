@@ -77,4 +77,4 @@ local.properties
 
 
 # Emacs
-\#*
+\#*war/WEB-INF/appengine-generated
